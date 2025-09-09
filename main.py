@@ -18,7 +18,9 @@ def number_to_letters(n):
 def image_on_excel(image_adress: str, excel_adress: str="", square_length: int=10):
     """it changes the cell colors acording to squares average color"""
     if not excel_adress:
-        excel_adress = re.sub(r"[/\\].+", f"/sample.xslx", image_adress)
+        excel_adress = re.sub(r"\.[a-zA-Z0-9]+$", f"_colored.xlsx", image_adress)
+    else:
+        excel_adress = re.sub(r"\.[a-zA-Z0-9]+$", f"_colored.xlsx", excel_adress)
     wb = Workbook()
     ws = wb.active
     img = Image.open(image_adress)
@@ -28,19 +30,20 @@ def image_on_excel(image_adress: str, excel_adress: str="", square_length: int=1
             sr = 0
             sg = 0
             sb = 0
-            for i in range((col - 1)*10, col * 10):
-                for j in range((row - 1)*10, row * 10):
+            for i in range((col - 1)*square_length, col * square_length):
+                for j in range((row - 1)*square_length, row * square_length):
                     r, g, b = img.getpixel((i, j))
                     sr += r
                     sg += g
                     sb += b
-            rgb_color = sr // square_length, sg // square_length, sb // square_length
+            rgb_color = sr // (square_length**2), sg // (square_length**2)\
+                , sb // (square_length**2)
             hex_color = f"{rgb_color[0]:02X}{rgb_color[1]:02X}{rgb_color[2]:02X}"
+            print(rgb_color, hex_color)
             color = PatternFill(start_color=hex_color, end_color=hex_color, fill_type="solid")
-            print(col + 1, number_to_letters(col + 1))
             cell_id = f"{number_to_letters(col + 1)}{row + 1}"
-            print(cell_id)
             ws[cell_id].fill = color
+    wb.save(excel_adress)   
 
 if __name__ == "__main__":
-    image_on_excel("sample.jpg", square_length=200)
+    image_on_excel("sample.jpg", square_length=50)
