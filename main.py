@@ -2,6 +2,7 @@
 this program converts an excel cells to an image according to inputed image
 author: amin
 """
+import os
 import re
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill
@@ -18,9 +19,13 @@ def number_to_letters(n):
 def image_on_excel(image_adress: str, excel_adress: str="", square_length: int=10):
     """it changes the cell colors acording to squares average color"""
     if not excel_adress:
-        excel_adress = re.sub(r"\.[a-zA-Z0-9]+$", f"_colored.xlsx", image_adress)
+        excel_adress = re.sub(r"\.[a-zA-Z0-9]+$", "_colored.xlsx", image_adress)
     else:
-        excel_adress = re.sub(r"\.[a-zA-Z0-9]+$", f"_colored.xlsx", excel_adress)
+        excel_adress = re.sub(r"\.[a-zA-Z0-9]+$", "_colored.xlsx", excel_adress)
+    num = 0
+    while os.path.isfile(excel_adress):
+        num += 1
+        excel_adress = re.sub(r"_colored\(?\d?\)?.xlsx", f"_colored({num}).xlsx", excel_adress)
     wb = Workbook()
     ws = wb.active
     img = Image.open(image_adress)
