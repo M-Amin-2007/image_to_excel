@@ -39,11 +39,14 @@ def image_on_excel(image_adress: str, excel_adress: str="", square_length: int=1
             rgb_color = sr // (square_length**2), sg // (square_length**2)\
                 , sb // (square_length**2)
             hex_color = f"{rgb_color[0]:02X}{rgb_color[1]:02X}{rgb_color[2]:02X}"
-            print(rgb_color, hex_color)
             color = PatternFill(start_color=hex_color, end_color=hex_color, fill_type="solid")
             cell_id = f"{number_to_letters(col + 1)}{row + 1}"
             ws[cell_id].fill = color
-    wb.save(excel_adress)   
+        column = ws.column_dimensions[number_to_letters(col + 1)]
+        column.width = 4
+    
+    wb.save(excel_adress)
+
 
 if __name__ == "__main__":
     image_on_excel("sample.jpg", square_length=50)
